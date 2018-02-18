@@ -2,3 +2,4 @@
 
 #include <stdio.h>
 #include <pigpio.h>
+#include <stdlib.h>
