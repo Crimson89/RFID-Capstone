@@ -7,13 +7,13 @@ int main()
   scanf("%1c", &temp);
   if (temp == 'y' || temp == 'Y')
   {
-    char station[100];
+    char station_id[100];
     FILE *fp;
     fp = fopen("station_info.txt", "w");
     printf("\nPlease enter a unique Station ID. No spaces. Max 100 characters.\n");
-    scanf("%100s", &station);
-    printf("\nStation ID: %s\n", station);
-    fprintf(fp, station);
+    scanf("%100s", &station_id);
+    printf("\nStation ID: %s\n", station_id);
+    fprintf(fp, station_id);
     fclose(fp);
     printf("Station ID has been successfully saved!\n");
   }
