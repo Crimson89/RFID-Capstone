@@ -8,8 +8,9 @@ int main(int argc, char *argv[])
   FILE *fp;
   int station_state = 0; // Stations current state, 1 = ON, 0 = OFF
   int user_id = 0; // Maybe need to change type ****************
-  int waiting_mode = 0; // Var to control waiting for access request
   char response[6]; // The "OK" signal var, might need to change **********
+  CURL * curl;
+  CURLcode res;
 
   // Start GPIO init
   if (gpioInitialise() < 0)
@@ -52,42 +53,48 @@ int main(int argc, char *argv[])
     fclose(fp);
   }
 
+  curl_global_init(CURL_GLOBAL_ALL);
+  curl = curl_easy_init();
 
   while (station_control == 1) // Exiting this loop will end the program
   {
-    // While station is in OFF state, poll for badge swipe
-    while (station_state == 0)
+    // Read for incoming badge
+    // {
+    //  Read/Poll for incoming badge code here
+    // }
+
+    // If there is an ID and it's a valid lenght
+    if (user_id != 0 && user_id >= BADGE_LEN) // Will need a change here ***********
     {
-      // Read for incoming badge
-      if (user_id != 0 && user_id >= BADGE_LEN) // Will need a change here ***********
+      // Send user_id, station_id, and station_state
+      if(curl)
       {
-        // Send user_id, station_id, and station_state
-        waiting_mode = 1; // Wait for response
-        while (waiting_mode == 1)
-        {
-          // Look for response
-          if (response == "200 OK") // If granted access
-          {
-            station_state = 1; // Set state to active
-            waiting_mode = 0; // Exit wait mode
-          }
-          else // No access, leave state as 0
-          {
-            waiting_mode = 0; // Exit wait mode
-          }
-        }
+        struct string s;
+        init_string(&s);
+        // Set URL that will receive POST
+        curl_easy_setopt(curl, CURLOPT_URL, "https://ruby.cecs.pdx.edu:3001/");
+        // Specify POST data
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "Station=3DPrinter1 UserID=138902 State=Off");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
+
+        // Perform the request, res will get the return code
+        res = curl_easy_perform(curl);
+        // Check return and turn machine on or off
+        /*if(res != CURLE_OK)
+          fprintf(stderr, "curl_easy_perform() failed: %s\n",
+            curl_easy_strerror(res));
+*/
+        printf("%s\n", s.ptr);
+
+        curl_easy_cleanup(curl);
       }
     }
-
-    // While station is in ON state, output a 1 on GPIO 18
-    while (station_state == 1)
-    {
-      gpioWrite(18, 1); // Turn ON
-      // More to go here like LED's and a way to turn off the machine
-    }
-  }
-
+   }
+  // Cleanup
   gpioTerminate(); // Release resources
+  free(s.ptr);
+  curl_global_cleanup();
 
   return 0;
 }
