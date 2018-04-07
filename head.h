@@ -4,7 +4,7 @@
 #include <pigpio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 
 struct string
 {
