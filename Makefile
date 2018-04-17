@@ -13,10 +13,10 @@ station_reset.o: station_reset.c
 	gcc -g -c station_reset.c
 
 main.o: main.c
-	gcc -g -c main.c -lpigpio -lrt -lpthread
+	gcc -g -c main.c -lpigpio -lrt -lpthread -lrpio
 
 read.o: read.c
-	gcc -g -c read.c -lpigpio -lrt -lpthread
+	gcc -g -c read.c -lpigpio -lrt -lpthread -lrpio
 
 clean:
 	rm -f station main.o station_info.txt station_reset.o reset read read.o
