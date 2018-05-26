@@ -44,7 +44,7 @@ void user_access(char *user)
   strcat(header2, user);
   struct curl_slist *headers = NULL;
 
-  static const char *postthis = "testing";
+  static const char *postthis = "/api/user-access";
   static const char *pCertFile = "/u/guen/test/LUCCA/test/cert/combined.pem";
 
   curl = curl_easy_init();
