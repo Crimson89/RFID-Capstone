@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-//#include <curl/curl.h>
+#include <pthread.h>
 
 #define BADGE_LEN 101 // Number of bits to read
 
