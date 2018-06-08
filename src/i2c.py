@@ -7,14 +7,17 @@ SCL=19
 I2C_ADDR=9
 
 file = open("data.txt", "w+")
+count = 0
 
 def i2c(id, tick):
  global pi
+ global count
 
  s, b, d = pi.bsc_i2c(I2C_ADDR)
 
  if b:
      file.write(d)
+     count += 1
      #print(d)
 
 pi = pigpio.pi()
@@ -34,7 +37,9 @@ e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 pi.bsc_i2c(I2C_ADDR) # Configure BSC as I2Cslave
 
-time.sleep(2)
+while(count < 98):
+    #print(count)
+    time.sleep(1)
 
 file.close()
 e.cancel()

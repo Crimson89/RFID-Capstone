@@ -2668,48 +2668,43 @@ int main(/*int argc, char *argv[]*/) {
 
   while (loop > 0)
   {
-    cardNo125 = read_125();
+    read_125();
+/*
+  	char *card_no;
+  	card_no = send_card_no();
+  	printf("Message recieved: %s\n", card_no);
+  	// count this card
+    if (NotEndless)    loop--;
+    use_vblock = 0xff;
+    // close / disconnect the card
+    PcdHalt();
 
-    
-
-
-	char *card_no;
-	card_no = send_card_no();
-	printf("Message recieved: %s\n", card_no); 
-	// count this card
-        if (NotEndless)    loop--;
-        
-        use_vblock = 0xff;
-
-        // close / disconnect the card
-        PcdHalt();        
-
-	int Led_Pin = 0;
-	printf("CARD: %s\n",card_str);
-	//pass = user_access(card_str);
-	pass = 0;
-	if (pass){
-	  Led_Pin = 4;
-          printf("Green!: %d\n", pass);
-	  digitalWrite(Led_Pin, HIGH);
+	  int Led_Pin = 0;
+	  printf("CARD: %s\n",card_str);
+	  //pass = user_access(card_str);
+	  pass = 0;
+	  if (pass){
+	    Led_Pin = 4;
+      printf("Green!: %d\n", pass);
+	    digitalWrite(Led_Pin, HIGH);
   	  bcm2835_delay(1500);
-	  digitalWrite(Led_Pin, LOW);
-          //Buzz_Once();
-        }
-        else{
-	  Led_Pin = 3;
-          printf("Red!: %d\n", pass);
-	  digitalWrite(Led_Pin, HIGH);
+	    digitalWrite(Led_Pin, LOW);
+      //Buzz_Once();
+    }
+    else{
+	    Led_Pin = 3;
+      printf("Red!: %d\n", pass);
+	    digitalWrite(Led_Pin, HIGH);
   	  bcm2835_delay(1500);
-	  digitalWrite(Led_Pin, LOW);
-          //Buzz_Twice();
-        }
-        printf("OUT");
-       
-        p_printf(YELLOW,"Please remove card within 2 seconds\n");
-            
-        sleep(2);
-        
+	    digitalWrite(Led_Pin, LOW);
+      //Buzz_Twice();
+    }
+    printf("OUT");
+
+    p_printf(YELLOW,"Please remove card within 2 seconds\n");
+*/
+    sleep(2);
+
     }   // loop
 
     return 0;

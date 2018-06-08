@@ -1,7 +1,7 @@
 #include "head.h"
 #include <python2.7/Python.h>
 
-#define SIZE 101
+#define SIZE 99
 // Compile with gcc run_py.c -lpython2.7
 // Requires Python 2.7 libraries to be installed
 
@@ -18,33 +18,58 @@ char* read_125()
     char str[80];
     FILE* data;
     data = fopen("data.txt", "r");
-    printf("fopen\n");
-    char line[SIZE];
-    memset(line, '0', 101);
-    int length = 0;
-    printf("line: %s\n", line);
-    char startBits[] = "000001";
-    int len = strlen(startBits);
-
-    printf("strlen\n");
-    fscanf(data, "%200c", line);
-    fclose(data);
-
-    printf("fclose\n");
-    char * ret;
-    ret = strstr(line, startBits);
-    if (ret == NULL)
+    if (data == NULL)
+    {
+      printf("Could not open file\n");
       return 0;
-    printf("strstr, %s\n", ret);
-    char cardNo [25];
-    //cardNo[25] = '\0';
-    //strcpy(cardNo, ret);
-    strncpy(cardNo, ret+19, 24);
+    }
 
-    printf("strncpy\n");
-    printf("Tag val: %s\n", cardNo);
-    //remove("data.txt");
+    // Check to see if file is empty
+    //fseek (data, 0, SEEK_END);
+    //int size = ftell(data);
+    //if (size != 0) // If there is something
+    //{
+      //char* line = malloc(sizeof(char)*99);
+      const char line[SIZE];
+      //memset(line, '0', SIZE);
 
-    printf("read_125 finished\n");
-  return cardNo;
+      //printf("line: %s\n", line);
+      const char startBits[10] = "0000001";
+      //int len = strlen(startBits);
+
+      //for (int i = 0; i < 99; i++)
+      //{
+      //  line[i] = getc(data);
+      //}
+
+      //printf("strlen\n");
+      /*int i=0;
+      while(!feof(data))
+      {
+        fscanf(data, "%s", line[i]);
+        i++;
+      }*/
+      fscanf(data, "%99c", &line);
+      fclose(data);
+
+      printf("line: %s\n", line);
+      char * ret;
+      ret = strstr(line, startBits);
+
+      printf("strstr %s\n", ret);
+      char cardNo [25];
+      cardNo[24] = '\0';
+      //strcpy(cardNo, ret);
+      strncpy(cardNo, ret+19, 24);
+
+      printf("strncpy\n");
+      printf("Tag val: %s\n", cardNo);
+      remove("data.txt");
+
+      printf("read_125 finished\n");
+      bcm2835_delay(1000);
+      return cardNo;
+    //}
+    //else
+      //return 0;
 }
