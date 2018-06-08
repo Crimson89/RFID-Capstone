@@ -1,4 +1,4 @@
-//gcc test2.c -lcurl -o test\
+//gcc test2.c -lcurl -o test
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
