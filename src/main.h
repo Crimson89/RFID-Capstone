@@ -73,10 +73,6 @@
 //supporting routines main
 /////////////////////////////////////////////////////////////////////
 
-int init_13();
-void * send_card_no(void* card_string);
-int Led_On();
-
 /* setup signals */
 void set_signals();
 

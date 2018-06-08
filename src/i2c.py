@@ -15,7 +15,7 @@ def i2c(id, tick):
 
  if b:
      file.write(d)
-     print(d)
+     #print(d)
 
 pi = pigpio.pi()
 
@@ -34,7 +34,7 @@ e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 pi.bsc_i2c(I2C_ADDR) # Configure BSC as I2Cslave
 
-time.sleep(60)
+time.sleep(2)
 
 file.close()
 e.cancel()

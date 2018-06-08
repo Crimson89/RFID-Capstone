@@ -1,7 +1,6 @@
-//#include <wiringPi.h>
-
 char VERSION[] = "1.65.3";
 #include "main.h"
+#include <pigpio.h>
 #include <memory.h>
 #define SIZE 200
 
@@ -38,6 +37,7 @@ struct string {
 
 int init_13()
 {
+  printf("init_13() Started\n");
   uint8_t gpio=255;           // GPIO for hard-reset
   uint32_t spi_speed = 1000L; // speed for SP (4 < >125) overruled by config file value
 
@@ -47,43 +47,49 @@ int init_13()
       p_printf(RED, "Must be run as root.\n");
       exit(1);
   }
-
-  Led_On();
+  printf("getuid fin\n");
+  //Led_On();
 
   // catch signals
   set_signals();
 
+  printf("set_signals fin\n");
   /* read /etc/rc522.conf */
   if (get_config_file()) exit(1);
 
+  printf("get_config_file fin\n");
   /* set BCM2835 Pins correct */
   if (HW_init(spi_speed,gpio)) close_out(1);
 
+  printf("HW_init fin\n");
   /* initialise the RC522 */
   InitRc522();
 
+  printf("InitRc522 fin\n");
   /* read & set GID and UID from config file */
   if (read_conf_uid()!= 0) close_out(1);
 
-  digitalWrite(3, 0);
+  printf("read_conf_uid fin\n");
+  printf("init_13() Completed\n");
 
+  return 0;
 }
 
 int Led_On()
-{
-  if(wiringPiSetup() == -1)
+{/*
+  if(gpioInitialise() < 0)
   {
-	  printf("setup wiringPi failed !\n");
+	  printf("setup pigpio failed !\n");
 	  return -1;
-  }
+  }*/
   printf("LED On\n");
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-	digitalWrite(3, HIGH);
-	digitalWrite(4, HIGH);
+  gpioSetMode(3, PI_OUTPUT);
+  gpioSetMode(4, PI_OUTPUT);
+	gpioWrite(3, 1);
+	gpioWrite(4, 1);
   bcm2835_delay(500);
-	digitalWrite(3, LOW);
-	digitalWrite(4, LOW);
+	gpioWrite(3, 0);
+	gpioWrite(4, 0);
   bcm2835_delay(500);
   return 0;
 }
@@ -143,18 +149,18 @@ uint8_t HW_init(uint32_t spi_speed, uint8_t gpio)
     p_printf(RED,"Can not initialise for BCM2835 access\n");
     exit(1);
   }
-
+  printf("bcm init fin\n");
   // HARD reset RC522 (only with valid gpio from config)
   if (use_gpio)
   {
     bcm2835_gpio_fsel(gpio, BCM2835_GPIO_FSEL_OUTP);
-
+    printf("gpio_fsel fin\n");
     // NRSTPD = low is OUT/ power down (PD)]
-    bcm2835_gpio_write(gpio, LOW);
+    bcm2835_gpio_write(gpio, 0);
     bcm2835_delay(500);
 
     // NRSTPD = positve edge is reset + run
-    bcm2835_gpio_write(gpio, HIGH);
+    bcm2835_gpio_write(gpio, 1);
     bcm2835_delay(500);
   }
   else
@@ -162,7 +168,7 @@ uint8_t HW_init(uint32_t spi_speed, uint8_t gpio)
 	  p_printf(RED,"GPIO in config file must be lower than 28\n");
 	  exit(1);
   }
-
+  printf("Hard reset fin\n");
   bcm2835_spi_begin();    // set pins 19, 21, 23, 24, 26
 
   // most significant bit is sent first
@@ -173,7 +179,8 @@ uint8_t HW_init(uint32_t spi_speed, uint8_t gpio)
   bcm2835_spi_setClockDivider((uint16_t)(250000L/spi_speed));	  // set speed
   bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // using SPI0
   bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      //
-  return(0);
+  printf("spi stuff fin\n");
+  return 0;
 }
 
 /* reset and terminate program */
@@ -1250,16 +1257,18 @@ int disp_access_perm(int access, uint8_t *buff)
         p_printf(YELLOW,"| \t\t\tRecharge only with KeyB \n");
         p_printf(WHITE,"----------------------------------------------------------------------------\n");
     } else
+      {
         p_printf(WHITE,"  6.\tKeyA|B\tKeyB\tKeyB\t\tKeyA|B\t\t(Value block)\n");
         p_printf(WHITE,"  \t\t\tRecharge / increment with KeyB\n");
-
+      }
      if (tmp == 7){
         p_printf(WHITE,"----------------------------------------------------------------------------\n");
         p_printf(YELLOW,"| 7.\tnever\tnever\tnever\t\tnever\t\t(read/write block)\n");
         p_printf(WHITE,"----------------------------------------------------------------------------\n");
     } else
+    {
         p_printf(WHITE,"  7.\tnever\tnever\tnever\t\tnever\t\t(read/write block)\n");
-
+    }
 	return(0);
 }
 
@@ -1348,8 +1357,9 @@ int disp_trailer_perm(int access, uint8_t *buff)
         p_printf(YELLOW,"| 7.\tnever\tnever\tkeyA|B\tnever\tnever\tnever\n");
         p_printf(WHITE,"----------------------------------------------------------------------------\n");
     } else
+    {
         p_printf(WHITE,"  7.\tnever\tnever\tkeyA|B\tnever\tnever\tnever\n");
-
+    }
 	return(0);
 }
 

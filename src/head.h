@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
-int init();
-void cleanup();
+//int init();
+//void cleanup();
 int read_station_info(char* station_id);
-void* read_125(void* cardNo);
+char* read_125();
 

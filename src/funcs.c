@@ -1,5 +1,5 @@
 #include "head.h"
-
+/*
 int init() // Initialises all needed utilities
 {
   // Start GPIO init
@@ -18,7 +18,7 @@ int init() // Initialises all needed utilities
 void cleanup() // Clean up after ourselves
 {
   gpioTerminate();
-}
+}*/
 
 int read_station_info(char* station_id)
 {
